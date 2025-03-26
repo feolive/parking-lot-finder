@@ -4,31 +4,7 @@ import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native
 import * as Location from 'expo-location';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCar, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
-
-// Mock parking lot data
-const PARKING_LOTS = [
-  {
-    id: 1,
-    name: 'Downtown Parking',
-    coordinate: { latitude: 40.7128, longitude: -74.006 },
-    hourlyRate: 15,
-    availableSpots: 45,
-  },
-  {
-    id: 2,
-    name: 'Central Plaza Parking',
-    coordinate: { latitude: 40.7138, longitude: -74.008 },
-    hourlyRate: 12,
-    availableSpots: 23,
-  },
-  {
-    id: 3,
-    name: 'Harbor View Parking',
-    coordinate: { latitude: 40.7118, longitude: -74.004 },
-    hourlyRate: 18,
-    availableSpots: 12,
-  },
-];
+import { PARKING_LOTS } from '../components/mocking-data';
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);

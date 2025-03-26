@@ -1,38 +1,14 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faMapMarkerAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
-
-// Mock parking history data
-const PARKING_HISTORY = [
-  {
-    id: 1,
-    location: 'Downtown Parking',
-    date: '2024-02-20',
-    duration: '2.5 hours',
-    cost: 37.50,
-  },
-  {
-    id: 2,
-    location: 'Central Plaza Parking',
-    date: '2024-02-19',
-    duration: '1.5 hours',
-    cost: 18.00,
-  },
-  {
-    id: 3,
-    location: 'Harbor View Parking',
-    date: '2024-02-18',
-    duration: '3 hours',
-    cost: 54.00,
-  },
-];
+import { SAVED_LIST } from '../components/mocking-data';
 
 export default function SavedListScreen() {
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Saved Parking Lots</Text>
       
-      {PARKING_HISTORY.map((record) => (
+      {SAVED_LIST.map((record) => (
         <View key={record.id} style={styles.historyCard}>
           <View style={styles.headerRow}>
             <Text style={styles.locationText}>{record.location}</Text>
