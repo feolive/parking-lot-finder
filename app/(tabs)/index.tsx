@@ -63,8 +63,8 @@ export default function MapScreen() {
         showsScale
         showsMyLocationButton={false}
         initialRegion={{
-          latitude: location?.coords.latitude || 40.7128,
-          longitude: location?.coords.longitude || -74.006,
+          latitude: location?.coords.latitude || 51.063828905941335,
+          longitude: location?.coords.longitude || -114.08904555828734,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}>

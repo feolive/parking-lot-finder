@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faClock, faMapMarkerAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { faClock, faMapMarkerAlt, faDollarSign, faParking } from '@fortawesome/free-solid-svg-icons';
 import { SAVED_LIST } from '../components/mocking-data';
 
 export default function SavedListScreen() {
@@ -22,13 +22,13 @@ export default function SavedListScreen() {
             </View>
             
             <View style={styles.detailRow}>
-              <FontAwesomeIcon icon={faClock} size={16} color="#666" />
-              <Text style={styles.detailText}>{record.duration}</Text>
+              <FontAwesomeIcon icon={faParking} size={16} color="#666" />
+              <Text style={styles.detailText}>{record.spots} Spots Available</Text>
             </View>
             
             <View style={styles.detailRow}>
               <FontAwesomeIcon icon={faDollarSign} size={16} color="#666" />
-              <Text style={styles.detailText}>${record.cost.toFixed(2)}</Text>
+              <Text style={styles.detailText}>${record.cost.toFixed(2)}/h</Text>
             </View>
           </View>
         </View>

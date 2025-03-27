@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faMap, faCalculator, faClock } from '@fortawesome/free-solid-svg-icons';
+import { faMap, faList } from '@fortawesome/free-solid-svg-icons';
 
 export default function TabLayout() {
   return (
@@ -34,7 +34,7 @@ export default function TabLayout() {
         options={{
           title: 'Saved List',
           tabBarIcon: ({ color, size }) => (
-            <FontAwesomeIcon icon={faClock} color={color} size={size} />
+            <FontAwesomeIcon icon={faList} color={color} size={size} />
           ),
         }}
       />
