@@ -1,16 +1,21 @@
 import {useEffect, useState, useRef} from 'react';
-import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Platform } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Modal, Platform } from 'react-native';
 import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faCar, faLocationCrosshairs } from '@fortawesome/free-solid-svg-icons';
+import { faParking, faXmark, faDollarSign, faLocationCrosshairs, faLocationDot, faCalculator, faDiamondTurnRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { PARKING_LOTS } from '../components/mocking-data';
+import { ParkingLot } from '../components/types';
+import Calculator from '../components/calculator';
+import BottomSheetComponent from '../components/bottom-sheet';
+
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [selectedLot, setSelectedLot] = useState(null);
+  const [selectedLot, setSelectedLot] = useState<ParkingLot | null>(null);
   const mapRef = useRef<MapView>(null);
+  const [showCalculator, setShowCalculator] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -58,9 +63,9 @@ export default function MapScreen() {
         ref={mapRef}
         style={styles.map}
         provider={mapProvider}
-        showsUserLocation
-        showsCompass
-        showsScale
+        showsUserLocation={true}
+        showsCompass={true}
+        showsScale={true}
         showsMyLocationButton={false}
         initialRegion={{
           latitude: location?.coords.latitude || 51.063828905941335,
@@ -73,7 +78,7 @@ export default function MapScreen() {
             key={lot.id}
             coordinate={lot.coordinate}
             onPress={() => setSelectedLot(lot)}>
-            <FontAwesomeIcon icon={faCar} size={24} color="#007AFF" />
+            <FontAwesomeIcon icon={faParking} size={24} color="#000000" />
           </Marker>
         ))}
       </MapView>
@@ -84,15 +89,46 @@ export default function MapScreen() {
 
       {selectedLot && (
         <View style={styles.parkingInfo}>
+          <View style={styles.popupHeader}>
           <Text style={styles.parkingName}>{selectedLot.name}</Text>
-          <Text style={styles.parkingDetails}>
-            ${selectedLot.hourlyRate}/hour • {selectedLot.availableSpots} spots available
-          </Text>
-          <TouchableOpacity style={styles.reserveButton}>
-            <Text style={styles.reserveButtonText}>Reserve Spot</Text>
+          <TouchableOpacity onPress={() => {setSelectedLot(null)}}>
+            <FontAwesomeIcon icon={faXmark} size={24} color="#aaa" />
           </TouchableOpacity>
+          </View>
+          <View style={styles.popupRow}>
+            <FontAwesomeIcon icon={faLocationDot} size={16} color="#666" />
+            <Text style={styles.parkingDetails}>{selectedLot.address}</Text>
+          </View>
+          <View style={styles.popupRow}>
+            <FontAwesomeIcon icon={faParking} size={16} color="#666" />
+            <Text style={styles.parkingDetails}>{selectedLot.availableSpots} spots available</Text>
+          </View>
+          <View style={styles.popupRow}>
+            <FontAwesomeIcon icon={faDollarSign} size={16} color="#666" />
+            <Text style={styles.parkingDetails}>{selectedLot.hourlyRate}/hour</Text>
+          </View>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.reserveButton} onPress={() => {setShowCalculator(true)}}>
+            <FontAwesomeIcon icon={faCalculator} size={18} color="#fff" />
+              <Text style={styles.reserveButtonText}>Calculate</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.reserveButton} onPress={() => {}}>
+            <FontAwesomeIcon icon={faDiamondTurnRight} size={18} color="#fff" />
+              <Text style={styles.reserveButtonText}>Direction</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
+      <Modal animationType="slide" transparent={true} visible={showCalculator}>
+        <View style={{ flex: 1, justifyContent: "flex-end", backgroundColor: "rgba(0,0,0,0.5)" }}>
+          <View style={{ height: 650, backgroundColor: "white", padding: 20 }}>
+            <TouchableOpacity onPress={() => setShowCalculator(false)}>
+              <FontAwesomeIcon icon={faArrowLeft} size={24} color="#aaa" />
+            </TouchableOpacity>
+            <Calculator parkingLot={selectedLot} />
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -119,6 +155,23 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  popupHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  popupRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    gap: 8,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 16,
+  },
   parkingInfo: {
     position: 'absolute',
     bottom: 0,
@@ -133,6 +186,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
+    gap: 12
   },
   parkingName: {
     fontSize: 20,
@@ -142,13 +196,14 @@ const styles = StyleSheet.create({
   parkingDetails: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 16,
   },
   reserveButton: {
     backgroundColor: '#007AFF',
     padding: 16,
     borderRadius: 12,
     alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4
   },
   reserveButtonText: {
     color: '#fff',

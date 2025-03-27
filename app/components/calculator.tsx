@@ -2,21 +2,22 @@ import { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import { ParkingLot } from './types';
 
-export default function CalculatorScreen() {
+export default function Calculator({parkingLot}: {parkingLot: ParkingLot|null}) {
   const [hours, setHours] = useState('');
-  const [rate, setRate] = useState('');
+  const hourlyRate = parkingLot?.hourlyRate;
   const [total, setTotal] = useState('');
 
   const calculateFee = () => {
-    const fee = parseFloat(hours) * parseFloat(rate);
+    const fee = parseFloat(hours) * (hourlyRate||0);
     setTotal(fee.toFixed(2));
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Parking Fee Calculator</Text>
+        <Text style={styles.title}>Fee Calculator</Text>
         
         <View style={styles.inputContainer}>
           <FontAwesomeIcon icon={faClock} size={20} color="#007AFF" />
@@ -30,16 +31,9 @@ export default function CalculatorScreen() {
           />
         </View>
 
-        <View style={styles.inputContainer}>
+        <View style={styles.textContainer}>
           <FontAwesomeIcon icon={faDollarSign} size={20} color="#007AFF" />
-          <TextInput
-            style={styles.input}
-            placeholder="Hourly Rate"
-            value={rate}
-            onChangeText={setRate}
-            keyboardType="numeric"
-            placeholderTextColor="#999"
-          />
+          <Text style={styles.parkingDetails}>{hourlyRate || 0}</Text>
         </View>
 
         <TouchableOpacity style={styles.calculateButton} onPress={calculateFee}>
@@ -88,11 +82,21 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 12,
   },
+  textContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
   input: {
     flex: 1,
     marginLeft: 12,
     fontSize: 16,
     color: '#333',
+  },
+  parkingDetails: {
+    fontSize: 16,
+    color: '#666',
   },
   calculateButton: {
     backgroundColor: '#007AFF',

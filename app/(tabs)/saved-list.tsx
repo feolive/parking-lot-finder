@@ -6,8 +6,6 @@ import { SAVED_LIST } from '../components/mocking-data';
 export default function SavedListScreen() {
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Saved Parking Lots</Text>
-      
       {SAVED_LIST.map((record) => (
         <View key={record.id} style={styles.historyCard}>
           <View style={styles.headerRow}>
