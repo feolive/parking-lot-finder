@@ -1,8 +1,9 @@
+import { LatLng } from "react-native-maps";
 
 export type ParkingLot = {
     id: number;
     name: string;
-    coordinate: Location;
+    coordinate: LatLng;
     hourlyRate: number;
     address: string;
     availableSpots: number;

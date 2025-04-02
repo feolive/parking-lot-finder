@@ -1,6 +1,6 @@
 import {useEffect, useState, useRef} from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Modal, Platform } from 'react-native';
-import MapView, { Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { LatLng, Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faParking, faXmark, faDollarSign, faLocationCrosshairs, faLocationDot, faCalculator, faDiamondTurnRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
@@ -8,6 +8,7 @@ import { PARKING_LOTS } from '../components/mocking-data';
 import { ParkingLot } from '../components/types';
 import Calculator from '../components/calculator';
 import BottomSheetComponent from '../components/bottom-sheet';
+import MapViewDirections from 'react-native-maps-directions';
 
 
 export default function MapScreen() {
@@ -16,6 +17,7 @@ export default function MapScreen() {
   const [selectedLot, setSelectedLot] = useState<ParkingLot | null>(null);
   const mapRef = useRef<MapView>(null);
   const [showCalculator, setShowCalculator] = useState(false);
+  const [destination, setDestination] = useState<LatLng | null>(null);
 
   useEffect(() => {
     (async () => {
@@ -81,6 +83,17 @@ export default function MapScreen() {
             <FontAwesomeIcon icon={faParking} size={24} color="#000000" />
           </Marker>
         ))}
+        {destination && location &&
+            <MapViewDirections
+                origin={location.coords}
+                destination={destination}
+                mode={'DRIVING' /* or 'WALKING' */}
+                precision={'high'}
+                strokeWidth={5}
+                strokeColor={'blue'}
+                apikey={process.env.EXPO_PUBLIC_API_KEY}
+                />
+        }
       </MapView>
 
       <TouchableOpacity style={styles.locationButton} onPress={centerOnUser}>
@@ -112,7 +125,7 @@ export default function MapScreen() {
             <FontAwesomeIcon icon={faCalculator} size={18} color="#fff" />
               <Text style={styles.reserveButtonText}>Calculate</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.reserveButton} onPress={() => {}}>
+            <TouchableOpacity style={styles.reserveButton} onPress={() => {setDestination(selectedLot.coordinate)}}>
             <FontAwesomeIcon icon={faDiamondTurnRight} size={18} color="#fff" />
               <Text style={styles.reserveButtonText}>Direction</Text>
             </TouchableOpacity>
