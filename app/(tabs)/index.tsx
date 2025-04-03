@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Modal, Platform }
 import MapView, { LatLng, Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faParking, faXmark, faDollarSign, faLocationCrosshairs, faLocationDot, faCalculator, faDiamondTurnRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faParking, faLocationPin, faXmark, faDollarSign, faLocationCrosshairs, faLocationDot, faCalculator, faDiamondTurnRight, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { PARKING_LOTS } from '../components/mocking-data';
 import { ParkingLot } from '../components/types';
 import Calculator from '../components/calculator';
@@ -26,7 +26,6 @@ export default function MapScreen() {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-
       let location = await Location.getCurrentPositionAsync({});
       setLocation(location);
     })();
@@ -65,7 +64,6 @@ export default function MapScreen() {
         ref={mapRef}
         style={styles.map}
         provider={mapProvider}
-        showsUserLocation={true}
         showsCompass={true}
         showsScale={true}
         showsMyLocationButton={false}
@@ -75,6 +73,11 @@ export default function MapScreen() {
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}>
+        {location && <Marker
+            key={'user location'}
+            coordinate={location?.coords} >
+            <FontAwesomeIcon icon={faLocationPin} size={24} color="#007aff" />
+          </Marker>}
         {PARKING_LOTS.map((lot) => (
           <Marker
             key={lot.id}
@@ -125,7 +128,7 @@ export default function MapScreen() {
             <FontAwesomeIcon icon={faCalculator} size={18} color="#fff" />
               <Text style={styles.reserveButtonText}>Calculate</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.reserveButton} onPress={() => {setDestination(selectedLot.coordinate)}}>
+            <TouchableOpacity style={styles.reserveButton} onPress={() => {setDestination(selectedLot.coordinate);setSelectedLot(null)}}>
             <FontAwesomeIcon icon={faDiamondTurnRight} size={18} color="#fff" />
               <Text style={styles.reserveButtonText}>Direction</Text>
             </TouchableOpacity>
