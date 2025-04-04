@@ -4,9 +4,12 @@ export type ParkingLot = {
     id: number;
     name: string;
     coordinate: LatLng;
-    hourlyRate: number;
+    hourlyRate: number | null;
     address: string;
-    availableSpots: number;
+    date: string | null,
+    spots: number | null,
+    cost: number | null,
+    availableSpots: number | null;
 };
 
 export default ParkingLot;

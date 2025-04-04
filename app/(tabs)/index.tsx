@@ -1,4 +1,4 @@
-import {useEffect, useState, useRef} from 'react';
+import {useEffect, useState, useRef, createContext, useContext} from 'react';
 import { View, Text, StyleSheet, Dimensions, TouchableOpacity, Modal, Platform } from 'react-native';
 import MapView, { LatLng, Marker, PROVIDER_DEFAULT, PROVIDER_GOOGLE } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -9,12 +9,14 @@ import { ParkingLot } from '../components/types';
 import Calculator from '../components/calculator';
 import BottomSheetComponent from '../components/bottom-sheet';
 import MapViewDirections from 'react-native-maps-directions';
+import { useTabContext } from './_layout';
 
 
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
-  const [selectedLot, setSelectedLot] = useState<ParkingLot | null>(null);
+  // const [selectedLot, setSelectedLot] = useState<ParkingLot | null>(null);
+  const { selectedLot, setSelectedLot } = useTabContext();
   const mapRef = useRef<MapView>(null);
   const [showCalculator, setShowCalculator] = useState(false);
   const [destination, setDestination] = useState<LatLng | null>(null);
@@ -75,15 +77,17 @@ export default function MapScreen() {
         }}>
         {location && <Marker
             key={'user location'}
+            tracksViewChanges={false}
             coordinate={location?.coords} >
             <FontAwesomeIcon icon={faLocationPin} size={24} color="#007aff" />
           </Marker>}
         {PARKING_LOTS.map((lot) => (
           <Marker
             key={lot.id}
+            tracksViewChanges={selectedLot !== null && selectedLot.id === lot.id}
             coordinate={lot.coordinate}
             onPress={() => setSelectedLot(lot)}>
-            <FontAwesomeIcon icon={faParking} size={24} color="#000000" />
+            <FontAwesomeIcon icon={faParking} size={24} color={(selectedLot&&selectedLot.id===lot.id)?'#ff7a00':"#000000"} />
           </Marker>
         ))}
         {destination && location &&
@@ -103,7 +107,13 @@ export default function MapScreen() {
         <FontAwesomeIcon icon={faLocationCrosshairs} size={24} color="#007AFF" />
       </TouchableOpacity>
 
-      {selectedLot && (
+      {selectedLot && (mapRef.current?.animateToRegion({
+          latitude: selectedLot!.coordinate.latitude,
+          longitude: selectedLot!.coordinate.longitude,
+          latitudeDelta: 0.01,
+          longitudeDelta: 0.01,
+        }) || true)
+        && (
         <View style={styles.parkingInfo}>
           <View style={styles.popupHeader}>
           <Text style={styles.parkingName}>{selectedLot.name}</Text>

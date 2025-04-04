@@ -1,35 +1,42 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faClock, faMapMarkerAlt, faDollarSign, faParking } from '@fortawesome/free-solid-svg-icons';
 import { SAVED_LIST } from '../components/mocking-data';
+import { useTabContext } from './_layout';
+import { useNavigation } from 'expo-router';
+import { NavigationProp, ParamListBase } from '@react-navigation/native';
 
 export default function SavedListScreen() {
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const { selectedLot, setSelectedLot } = useTabContext();
   return (
     <ScrollView style={styles.container}>
       {SAVED_LIST.map((record) => (
-        <View key={record.id} style={styles.historyCard}>
-          <View style={styles.headerRow}>
-            <Text style={styles.locationText}>{record.location}</Text>
-            <Text style={styles.dateText}>{record.date}</Text>
-          </View>
-          
-          <View style={styles.detailsContainer}>
-            <View style={styles.detailRow}>
-              <FontAwesomeIcon icon={faMapMarkerAlt} size={16} color="#666" />
-              <Text style={styles.detailText}>{record.location}</Text>
+        <TouchableOpacity key={record.id} onPress={() => {setSelectedLot(record);navigation.navigate('index')}}>
+          <View key={record.id} style={styles.historyCard}>
+            <View style={styles.headerRow}>
+              <Text style={styles.locationText}>{record.address}</Text>
+              <Text style={styles.dateText}>{record.date}</Text>
             </View>
             
-            <View style={styles.detailRow}>
-              <FontAwesomeIcon icon={faParking} size={16} color="#666" />
-              <Text style={styles.detailText}>{record.spots} Spots Available</Text>
-            </View>
-            
-            <View style={styles.detailRow}>
-              <FontAwesomeIcon icon={faDollarSign} size={16} color="#666" />
-              <Text style={styles.detailText}>${record.cost.toFixed(2)}/h</Text>
+            <View style={styles.detailsContainer}>
+              <View style={styles.detailRow}>
+                <FontAwesomeIcon icon={faMapMarkerAlt} size={16} color="#666" />
+                <Text style={styles.detailText}>{record.name}</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <FontAwesomeIcon icon={faParking} size={16} color="#666" />
+                <Text style={styles.detailText}>{record.spots} Spots Available</Text>
+              </View>
+              
+              <View style={styles.detailRow}>
+                <FontAwesomeIcon icon={faDollarSign} size={16} color="#666" />
+                <Text style={styles.detailText}>${record.cost.toFixed(2)}/h</Text>
+              </View>
             </View>
           </View>
-        </View>
+        </TouchableOpacity>
       ))}
     </ScrollView>
   );
